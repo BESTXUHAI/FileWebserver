@@ -5,14 +5,18 @@
 编译时需要用到第三方库pthread和mysqlclient，可以在config.h配置是否打开数据库和日志系统，以及事件模式。
 ## 数据库
 如果开启了数据库模块，需要安装mysql服务器和客户端，创建对应的数据库和用户表。在main.cpp的database_init函数中配置数据库登录账号密码和库表。
-、、、
+```
 create database webdb;
 USE webdb;
 CREATE TABLE user(
     username char(50) NULL,
     passwd char(50) NULL
 )ENGINE=InnoDB;
-、、、
+```
 ## 运行结果
-![登录显示](resource/test1.jpg)
-![资源列表](resource/test2.jpg)
+![登录显示](resources/test1.jpg)
+![资源列表](resources/test2.jpg)
+## 完整项目文件
+[百度云](https://pan.baidu.com/s/1KDnY9qob6o8Pc6e8m51f9A ) 提取码：yuze
+## 参考项目
+https://github.com/qinguoyi/TinyWebServer
