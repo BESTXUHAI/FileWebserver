@@ -77,7 +77,10 @@ private:
     bool m_islogin;
     //开启登录校验
     bool m_openlogjudge;
-
+    //是否发送cookie
+    bool m_sendcookie;
+    //是否收到cookie
+    bool m_getcookie;
 
 public:
     httpdeal(/* args */);
@@ -109,6 +112,7 @@ private:
     bool add_headers( int content_length );
     bool add_content_length( int content_length );
     bool add_linger();
+    bool add_cookie();
     bool add_blank_line();
     bool add_contentdir();
     bool readtobuf(const char* file_p);
