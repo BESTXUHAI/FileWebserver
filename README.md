@@ -18,5 +18,9 @@ CREATE TABLE user(
 ![资源列表](resources/test2.jpg)
 ## 完整项目文件
 [百度云](https://pan.baidu.com/s/1KDnY9qob6o8Pc6e8m51f9A ) 提取码：yuze
+
+## 更新日志
+- [x] 当请求服务器上大文件时，浏览器会重置连接，导致请求失败。解决方案：增加cookie检验
+
 ## 参考项目
 https://github.com/qinguoyi/TinyWebServer
