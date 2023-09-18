@@ -58,6 +58,8 @@ void httpdeal::readinit()
     m_writebuf = NULL;
     m_writelen = 0;
     m_openlogjudge = OPEN_LOGJUDGE;
+    m_sendcookie = false;
+    m_getcookie = false;
 }
 
 void httpdeal::connectinit()
@@ -213,6 +215,11 @@ HTTP_CODE httpdeal::parse_headers( char* text )
             m_host = value;
             //LOG_DEBUG("host:%s", m_host);
         }
+        else if(strcasecmp(key, "Cookie") == 0)
+        {
+            m_getcookie = true;
+            m_islogin = true;
+        }
         else
         {
             //LOG_DEBUG("unknow header key=%s value=%s", key, value);
@@ -330,8 +337,10 @@ bool httpdeal::dealurl(char *filepath, int len)
 {
     
     if (m_method == GET)
-    {
-        if (!strcmp(m_filepath, "/register.html")||!strcmp(m_filepath, "/login.html")||!m_openlogjudge||m_islogin)
+    {   
+        //判断是否需要登录检验
+        if (!strcmp(m_filepath, "/register.html") || !strcmp(m_filepath, "/login.html")
+            ||!m_openlogjudge||m_islogin)
         {
             strncpy( filepath + len, m_filepath, 200 - len - 1 );
         }
@@ -378,6 +387,8 @@ bool httpdeal::dealurl(char *filepath, int len)
                 strncpy( filepath + len, "/", 200 - len - 1 );
                 LOG_INFO("login success jump to /");
                 m_islogin = true;
+                //登录成功，发送cookie
+                m_sendcookie = true;
             }
             else
             {
@@ -481,10 +492,16 @@ bool httpdeal::add_status_line( int status, const char* title ) {
 }
 
 bool httpdeal::add_headers(int content_len) {
-    add_content_length(content_len);
-    add_content_type();
-    add_linger();
-    add_blank_line();
+    bool flag = true;
+    flag &= add_content_length(content_len);
+    flag &= add_content_type();
+    flag &= add_linger();
+    if (m_sendcookie)
+    {
+        flag &= add_cookie();
+    }
+    
+    flag &= add_blank_line();
 }
 
 bool httpdeal::add_content_length(int content_len) {
@@ -496,6 +513,11 @@ bool httpdeal::add_content_length(int content_len) {
 bool httpdeal::add_linger()
 {
     return add_response( "Connection: %s\r\n", ( m_keepalive == true ) ? "keep-alive" : "close" );
+}
+
+bool httpdeal::add_cookie()
+{
+    return add_response("%s", "Set-Cookie: login=yes\r\n");
 }
 
 bool httpdeal::add_blank_line()
